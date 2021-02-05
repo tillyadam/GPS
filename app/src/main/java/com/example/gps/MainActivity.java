@@ -13,8 +13,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private boolean writePermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
                 latitude = location.getLatitude();
             }
         };
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            writePermission = false;
+
+
+            return;
+        }
+        writePermission = true;
     }
 
     @Override
@@ -105,11 +117,21 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private Runnable TimerTick = new Runnable() {
+    private final Runnable TimerTick = new Runnable() {
         @Override
         public void run() {
             String szoveg = String.format("Long: %f \nLat: %f", longitude, latitude);
             gpsText.setText(szoveg);
+            /*if () {
+
+
+                try {
+                    Naplozas.kiir(longitude, latitude);
+                } catch (IOException e) {
+                    Log.d("Kiirasi hiba", e.getMessage());
+                    e.printStackTrace();
+                }
+            }*/
         }
     };
 
